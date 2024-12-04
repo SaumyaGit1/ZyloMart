@@ -3,22 +3,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* In your global CSS or any Tailwind custom file */
+
 .active {
     @apply bg-blue-950 text-white;
-  }
-  @media (max-width: 767px) {
-    .hidden-below-764 {
-      display: none !important;
+}
+
+@media (max-width: 820px) {
+    .hidden-below-820 {
+        display: none; /* Hide desktop navigation */
     }
-  }
-  *{
+    
+    /* Show the menu icon on smaller screens */
+    .md\:hidden {
+        display: block; /* Ensures the menu icon shows on mobile */
+    }
+    
+    a.active {
+        background-color: rgb(52, 45, 99);
+        color: white;
+    }
+}
+
+* {
     font-family: Outfit;
-  }
-  .prata-regular {
+}
+::-webkit-scrollbar{
+    display: none;
+}
+.prata-regular {
     font-family: "Prata", serif;
     font-weight: 400;
     font-style: normal;
-  }
-  
-  
+}
