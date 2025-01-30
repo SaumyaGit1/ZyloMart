@@ -29,7 +29,7 @@ const orderSchema = new mongoose.Schema(
       
       required: true,
     },
-    paymentDate: {
+    payment: {
       type: Boolean,
       required:true,
       default: false, // Default to order placement time

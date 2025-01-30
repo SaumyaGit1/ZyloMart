@@ -47,29 +47,39 @@ const addToCart = async (req, res) => {
   // Improved updateCart
   const updateCart = async (req, res) => {
     try {
-      const { userId,itemId, size, quantity } = req.body;
-    
-      if (quantity <= 0) {
-        return res.status(400).json({ success: false, message: 'Quantity must be greater than zero' });
-      }
-    
-      const userData = await userModel.findById(userId);  // Use req.userId from authUser middleware
+      const { userId, itemId, size, quantity } = req.body;
+      
+      const userData = await userModel.findById(userId); // Use req.userId from authUser middleware
       if (!userData) {
         return res.status(404).json({ success: false, message: 'User not found' });
       }
-    
-      let cartData = await userData.cartData;
-      
-        cartData[itemId][size] = quantity;  // Update quantity
-        await userModel.findByIdAndUpdate(userId, { cartData });
-        return res.json({ success: true, message: 'Cart updated successfully' });
-      
+  
+      let cartData = userData.cartData;
+  
+      if (quantity === 0) {
+        // Remove the specific size from the item
+        delete cartData[itemId][size];
+  
+        // If no sizes remain for this item, remove the entire item
+        if (Object.keys(cartData[itemId]).length === 0) {
+          delete cartData[itemId];
+        }
+      } else {
+        // Update quantity
+        if (!cartData[itemId]) {
+          cartData[itemId] = {};
+        }
+        cartData[itemId][size] = quantity;
+      }
+  
+      await userModel.findByIdAndUpdate(userId, { cartData });
+  
+      return res.json({ success: true, message: 'Cart updated successfully' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, message: 'Failed to update cart' });
     }
   };
-  
   // Improved getUserCart
   const getUserCart = async (req, res) => {
     try {
@@ -87,6 +97,37 @@ const addToCart = async (req, res) => {
       res.status(500).json({ success: false, message: 'Failed to retrieve cart' });
     }
   };
+  const removeCart=async(req,res)=>{
+    try {
+      const { userId, itemId, size } = req.body;
   
+      // Find the user
+      const user = await userModel.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
   
-export {addToCart,updateCart,getUserCart}
+      // Check if item exists in the cart
+      if (!user.cartData[itemId] || !user.cartData[itemId][size]) {
+        return res.status(400).json({ message: "Item not in cart" });
+      }
+  
+      // Remove the item from cart
+      delete user.cartData[itemId][size];
+  
+      // If no sizes remain, remove the item completely
+      if (Object.keys(user.cartData[itemId]).length === 0) {
+        delete user.cartData[itemId];
+      }
+  
+      // Save updated cart to DB
+      await user.save();
+  
+      return res.status(200).json({ message: "Item removed successfully", cart: user.cartData });
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+  
+export {addToCart,updateCart,getUserCart,removeCart}

@@ -5,20 +5,20 @@ import { assets } from "../assets/assets";
 import CartTotal from "../components/CartTotal";
 
 function Cart() {
-  const { products, currency, cartItems, updateQuantity, navigate } =
+  const { products, currency, cartItems, updateQuantity, removeItem, navigate } =
     useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
     if (products.length > 0) {
       const tempData = [];
-      for (const itemId in cartItems) {
-        for (const size in cartItems[itemId]) {
-          if (cartItems[itemId][size] > 0) {
+      for (const items in cartItems) {
+        for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
             tempData.push({
-              _id: itemId,
-              size: size,
-              quantity: cartItems[itemId][size],
+              _id: items,
+              size: item,
+              quantity: cartItems[items][item],
             });
           }
         }
