@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useContext ,useEffect} from "react";
-import  { ShopContext } from "../context/ShopContext";
+import ShopContextProvider, { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 import Title from "../components/Title";
 
