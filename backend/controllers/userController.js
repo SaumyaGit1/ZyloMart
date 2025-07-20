@@ -1,6 +1,6 @@
 import validator from "validator";
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import userModel from '../models/userModel.js';  // Ensure correct import of userModel
 
 // Function to create JWT token
